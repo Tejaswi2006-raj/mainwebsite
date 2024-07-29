@@ -1,0 +1,139 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}About Us - Computer Concepts{% endblock %}
+
+{% block content %}
+<style>
+/* Custom styles */
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+.header {
+  background-color: #1a2533;
+  color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  padding: 1rem 2rem;
+}
+.header a {
+  color: #ffffff;
+  text-decoration: none;
+}
+.nav-pills .nav-link {
+  color: #ffffff;
+  border-radius: 0.375rem;
+  margin: 0 0.5rem;
+}
+.nav-pills .nav-link.active {
+  background-color: #00c2cb;
+  color: #ffffff;
+  border-color: #00c2cb;
+}
+.nav-pills .nav-link:hover {
+  background-color: #2a3a4f;
+  color: #ffffff; /* Ensure text color remains white on hover */
+}
+.container {
+  padding: 2rem;
+}
+.contact-form {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.contact-info {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+.footer {
+  background-color: #1a2533;
+  color: #ffffff;
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 1.5rem 0;
+}
+.footer a {
+  color: #00c2cb;
+  text-decoration: none;
+}
+.footer a:hover {
+  color: #009ba3;
+}
+.btn-primary-custom {
+  background-color: #00c2cb;
+  border-color: #00c2cb;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+.btn-primary-custom:hover {
+  background-color: #009ba3;
+  border-color: #00848b;
+}
+.logo-text {
+  color: #ffffff;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+</style>
+  <div class="container">
+    <div class="contact-form card mb-4">
+      <div class="card-body">
+        <h2>Contact Us</h2>
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+              <label for="id_name" class="form-label">Name</label>
+              <input type="text" class="form-control" id="id_name" name="name" required>
+          </div>
+          <div class="mb-3">
+              <label for="id_email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="id_email" name="email" required>
+          </div>
+          <div class="mb-3">
+              <label for="id_message" class="form-label">Message</label>
+              <textarea class="form-control" id="id_message" name="message" rows="4" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-primary-custom">Send Message</button>
+      </form>
+      </div>
+    </div>
+
+    <div class="location-hours card">
+      <div class="card-body">
+        <h2>Location & Hours</h2>
+        <div class="map-container mb-4">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3479.874487384922!2d-91.14323188489196!3d30.225493281812836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x86249c5d6936af5d%3A0x55e7d5b8d41f6787!2s115%20W%20Main%20St%2C%20Lafayette%2C%20LA%2070501%2C%20USA!5e0!3m2!1sen!2sus!4v1655556698746!5m2!1sen!2sus"
+            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <p>115 W Main St, Suite 5,<br>
+            Lafayette, LA 70501</p>
+          </div>
+          <div class="col-md-6">
+            <table class="hours-table table">
+              <tr><td>Monday:</td><td>9:00am - 9:00pm</td></tr>
+              <tr><td>Tuesday:</td><td>9:00am - 9:00pm</td></tr>
+              <tr><td>Wednesday:</td><td>9:00am - 9:00pm</td></tr>
+              <tr><td>Thursday:</td><td>9:00am - 9:00pm</td></tr>
+              <tr><td>Friday:</td><td>9:00am - 9:00pm</td></tr>
+              <tr><td>Saturday:</td><td>9:00am - 9:00pm</td></tr>
+              <tr><td>Sunday:</td><td>Closed</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
