@@ -81,59 +81,60 @@ body {
   font-weight: 600;
   letter-spacing: 1px;
 }
-
 </style>
-  <div class="container">
-    <div class="contact-form card mb-4">
-      <div class="card-body">
-        <h2>Contact Us</h2>
-        <form method="post">
-          {% csrf_token %}
-          <div class="mb-3">
-              <label for="id_name" class="form-label">Name</label>
-              <input type="text" class="form-control" id="id_name" name="name" required>
-          </div>
-          <div class="mb-3">
-              <label for="id_email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="id_email" name="email" required>
-          </div>
-          <div class="mb-3">
-              <label for="id_message" class="form-label">Message</label>
-              <textarea class="form-control" id="id_message" name="message" rows="4" required></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary btn-primary-custom">Send Message</button>
-      </form>
-      </div>
-    </div>
 
-    <div class="location-hours card">
-      <div class="card-body">
-        <h2>Location & Hours</h2>
-        <div class="map-container mb-4">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3479.874487384922!2d-91.14323188489196!3d30.225493281812836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x86249c5d6936af5d%3A0x55e7d5b8d41f6787!2s115%20W%20Main%20St%2C%20Lafayette%2C%20LA%2070501%2C%20USA!5e0!3m2!1sen!2sus!4v1655556698746!5m2!1sen!2sus"
-            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
+<div class="container">
+  <div class="contact-form card mb-4">
+    <div class="card-body">
+      <h2>Contact Us</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="id_name" class="form-label">Name</label>
+          <input type="text" class="form-control" id="id_name" name="name" required>
         </div>
-        <div class="row">
-          <div class="col-md-6">
-            <p>115 W Main St, Suite 5,<br>
-            Lafayette, LA 70501</p>
-          </div>
-          <div class="col-md-6">
-            <table class="hours-table table">
-              <tr><td>Monday:</td><td>9:00am - 9:00pm</td></tr>
-              <tr><td>Tuesday:</td><td>9:00am - 9:00pm</td></tr>
-              <tr><td>Wednesday:</td><td>9:00am - 9:00pm</td></tr>
-              <tr><td>Thursday:</td><td>9:00am - 9:00pm</td></tr>
-              <tr><td>Friday:</td><td>9:00am - 9:00pm</td></tr>
-              <tr><td>Saturday:</td><td>9:00am - 9:00pm</td></tr>
-              <tr><td>Sunday:</td><td>Closed</td></tr>
-            </table>
-          </div>
+        <div class="mb-3">
+          <label for="id_email" class="form-label">Email</label>
+          <input type="email" class="form-control" id="id_email" name="email" required>
+        </div>
+        <div class="mb-3">
+          <label for="id_message" class="form-label">Message</label>
+          <textarea class="form-control" id="id_message" name="message" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-primary-custom">Send Message</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="location-hours card">
+    <div class="card-body">
+      <h2>Location & Hours</h2>
+      <div class="map-container mb-4">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3479.874487384922!2d-91.14323188489196!3d30.225493281812836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x86249c5d6936af5d%3A0x55e7d5b8d41f6787!2s115%20W%20Main%20St%2C%20Lafayette%2C%20LA%2070501%2C%20USA!5e0!3m2!1sen!2sus!4v1655556698746!5m2!1sen!2sus"
+          width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <p>115 W Main St, Suite 5,<br>Lafayette, LA 70501</p>
+          <p>Phone: 337-889-5117</p>
+          <p>Fax: 337-889-5117</p>
+        </div>
+        <div class="col-md-6">
+          <table class="hours-table table">
+            <tr><td>Monday:</td><td>9:00am - 5:00pm</td></tr>
+            <tr><td>Tuesday:</td><td>9:00am - 5:00pm</td></tr>
+            <tr><td>Wednesday:</td><td>9:00am - 5:00pm</td></tr>
+            <tr><td>Thursday:</td><td>9:00am - 5:00pm</td></tr>
+            <tr><td>Friday:</td><td>9:00am - 5:00pm</td></tr>
+            <tr><td>Saturday:</td><td>Closed</td></tr>
+            <tr><td>Sunday:</td><td>Closed</td></tr>
+          </table>
         </div>
       </div>
     </div>
   </div>
+</div>
 
 {% endblock %}
