@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 from .models import ContactForm
 
 def index(request):
@@ -6,6 +6,9 @@ def index(request):
 
 def about(request):
     return render(request, 'about.html')
+
+def sitemap(request):
+    return HttpResponse(open('templates/sitemap.xml').read(), content_type='text/xml')
 
 def contact(request):
     if request.method == "POST":
