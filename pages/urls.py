@@ -7,5 +7,9 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('about', views.about, name='about'),
     path('contact', views.contact, name='contact'),
-    path('sitemap', views.sitemap, name='sitemap')
+    path('sitemap', views.sitemap, name='sitemap'),
+    path('events', views.events, name='events'),
+    path('admin/events', views.adminEvents, name = 'adminEvents'),
+    path('admin/events/create', views.adminEventsCreate, name = 'adminEventsCreate'),
+    path('admin/events/image/add/<uuid:event_id>', views.add_image, name = 'add_image')
 ]
