@@ -52,3 +52,10 @@ def add_image(request, event_id):
     else:
         form = EventImageForm(instance=event)
     return render(request, 'your_template_name.html', {'form': form, 'event': event})
+
+@require_POST
+def change_event(request, event_id):
+    event = Events.objects.get(id=event_id)
+    event.status = False
+    event.save()
+    return redirect('adminEvents')

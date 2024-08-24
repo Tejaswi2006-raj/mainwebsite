@@ -151,9 +151,16 @@
                     <p class="event-description">{{ event.description }}</p>
                     <p class="event-details">Date: {{ event.eventdate }}</p>
                     <p class="event-details">Ticket Cost: ${{ event.cost }}</p>
+                    
+                    <!-- View and Add Image Buttons -->
                     <button class="btn btn-primary view-button">View</button>
                     <button class="btn btn-secondary add-image-button" data-bs-toggle="modal" data-bs-target="#addImageModal-{{ event.id }}">Add Image</button>
+                
+                    <!-- Close Event Button -->
+                    <button class="btn btn-danger close-event-button" data-bs-toggle="modal" data-bs-target="#closeEventModal-{{ event.id }}">Close Event</button>
                 </div>  
+                
+                <!-- Add Image Modal -->
                 <div class="modal fade" id="addImageModal-{{ event.id }}" tabindex="-1" aria-labelledby="addImageModalLabel-{{ event.id }}" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -170,7 +177,27 @@
                             </div>
                         </div>
                     </div>
-                </div>              
+                </div>
+                
+                <!-- Close Event Modal -->
+                <div class="modal fade" id="closeEventModal-{{ event.id }}" tabindex="-1" aria-labelledby="closeEventModalLabel-{{ event.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="closeEventModalLabel-{{ event.id }}">Close Event: {{ event.title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to close this event?</p>
+                                <form method="POST" action="{% url 'change_event' event.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Confirm Close</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                              
                 {%endfor%}
             </div>
         </main>

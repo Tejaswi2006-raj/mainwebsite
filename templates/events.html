@@ -96,7 +96,9 @@
             <h5 class="card-title">{{ event.title }}</h5>
             <p class="card-text">{{ event.description }}</p>
             <p class="card-text"><strong>Cost: ${{ event.cost }}</strong></p>
+            {%if event.status%}
             <a href="#" class="btn btn-primary btn-lg">Buy Now</a>
+            {%endif%}
           </div>
           <div class="card-footer text-muted">
             <small>Happening on: {{ event.eventdate }}</small>

@@ -13,6 +13,6 @@ class Events(models.Model):
     eventdate = models.DateField()
     cost = models.IntegerField()
     image = models.FileField(blank=True)
-    
+    status = models.BooleanField(default=True)
     def __str__(self):
         return self.title

@@ -11,5 +11,6 @@ urlpatterns = [
     path('events', views.events, name='events'),
     path('admin/events', views.adminEvents, name = 'adminEvents'),
     path('admin/events/create', views.adminEventsCreate, name = 'adminEventsCreate'),
-    path('admin/events/image/add/<uuid:event_id>', views.add_image, name = 'add_image')
+    path('admin/events/image/add/<uuid:event_id>', views.add_image, name = 'add_image'),
+    path('admin/events/status/change/<uuid:event_id>', views.change_event, name = 'change_event'),
 ]
