@@ -123,6 +123,16 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
+STRIPE_PUBLIC_KEY = 'pk_test_51MsYaVIj9JFN5Py8ttbhr1SvNPFQxIJs31AjnD7QJmbc0FbAahnkSjlvIENI4BSZJ4JRNBoBYdg0FeaGHeBN5ugG00NQfe7HzC'
+STRIPE_SECRET_KEY = 'sk_test_51MsYaVIj9JFN5Py8IXRrKU4m54jcVcdYpOaOMue8vIViYaLgyu9lQmmpBERJ0kgLjcSiUdkb4iMx7FFKaLiHAGyt00RFmLkIEf'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'noreplycomputerconcepts@gmail.com'
+EMAIL_HOST_PASSWORD = 'mmsn wgyv kejj kpms'
+DEFAULT_FROM_EMAIL = 'noreplycomputerconcepts@gmail.com'

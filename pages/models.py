@@ -16,3 +16,16 @@ class Events(models.Model):
     status = models.BooleanField(default=True)
     def __str__(self):
         return self.title
+
+class Ticket(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    event = models.ForeignKey(Events, on_delete=models.CASCADE)
+    purchaseDate = models.DateField(auto_now_add=True)
+    email = models.EmailField()
+
+class Invoice(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    tickets = models.ManyToManyField(Ticket, blank=True)
+    email = models.EmailField()
+    cost = models.IntegerField()
+    verified = models.BooleanField(default=False)
