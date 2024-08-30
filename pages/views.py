@@ -1,8 +1,12 @@
 from django.shortcuts import render, HttpResponse, redirect
 from .models import ContactForm, Events, Invoice, Ticket
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 import barcode
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
 from barcode.writer import ImageWriter
 from io import BytesIO
 from django.conf import settings
@@ -19,8 +23,23 @@ from reportlab.pdfgen import canvas
 import base64
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
 def generate_otp():
     return str(random.randint(100000, 999999))
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            messages.success(request, 'You have been logged in successfully.')
+            return redirect('adminEvents')  # Redirect to a success page or dashboard
+        else:
+            messages.error(request, 'Invalid username or password.')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
 
 def send_otp(email):
     otp = generate_otp()
@@ -29,24 +48,22 @@ def send_otp(email):
     send_mail(subject, message, 'your_email@example.com', [email])
     return otp
 
-
 def buy_tickets(request, event_id):
     event = Events.objects.get(id=event_id)
-    
     if request.method == 'POST':
         email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
         number_of_tickets = int(request.POST.get('tickets'))
-        
-        # Send OTP to email and store OTP and other details in session
         otp = send_otp(email)
         request.session['otp'] = otp
         request.session['email'] = email
+        request.session['first_name'] = first_name
+        request.session['last_name'] = last_name
         request.session['event_id'] = str(event.id)
         request.session['number_of_tickets'] = number_of_tickets
         request.session['otp_timestamp'] = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
-        
         return redirect('verify_email')
-    
     return render(request, 'buy_tickets.html', {'event': event})
 
 def verify_email(request):
@@ -54,26 +71,21 @@ def verify_email(request):
         entered_otp = request.POST.get('otp')
         stored_otp = request.session.get('otp')
         otp_expiry_time_str = request.session.get('otp_expiry_time')
-
-        # Ensure otp_expiry_time is timezone-aware
         otp_expiry_time = None
         if otp_expiry_time_str:
             try:
                 otp_expiry_time = timezone.datetime.fromisoformat(otp_expiry_time_str)
             except ValueError:
                 otp_expiry_time = None
-
         if otp_expiry_time and timezone.now() > otp_expiry_time:
             messages.error(request, 'The OTP has expired.')
             return redirect('verify_email')
-
         if entered_otp == stored_otp:
-            # OTP verified, proceed to payment
             email = request.session.get('email')
+            last_name = request.session.get('last_name')
+            first_name = request.session.get('first_name')
             event_id = request.session.get('event_id')
             number_of_tickets = request.session.get('number_of_tickets')
-            
-            # Create tickets
             event = Events.objects.get(id=event_id)
             tickets = []
             cost = 0
@@ -82,39 +94,28 @@ def verify_email(request):
                 ticket.save()
                 tickets.append(ticket)
                 cost+=event.cost
-            
-            # Create invoice
-            invoice = Invoice(email=email, verified=True, cost = cost)
+            invoice = Invoice(email=email, first_name = first_name, last_name = last_name, verified=True, cost = cost)
             invoice.save()
             invoice.tickets.set(tickets)
             invoice.save()
-            
-            # Clear session data
             request.session.pop('otp', None)
             request.session.pop('otp_expiry_time', None)
             request.session.pop('email', None)
             request.session.pop('event_id', None)
             request.session.pop('number_of_tickets', None)
-            
-            # Redirect to a success page or payment gateway
-            return redirect('payment_page', invoice.id)  # Replace with your success URL
-
+            return redirect('payment_page', invoice.id)
         else:
             messages.error(request, 'Invalid OTP.')
             return redirect('verify_email')
-
     return render(request, 'verify_email.html')
 
 def show_tickets(request):
-    
     if request.method == 'POST':
         email = request.POST.get('email')
-        # Send OTP to email and store OTP and other details in session
         otp = send_otp(email)
         request.session['otp'] = otp
         request.session['email'] = email
         request.session['otp_timestamp'] = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
-        
         return redirect('verify_tickets')    
     return render(request, 'show_tickets.html')
 
@@ -134,7 +135,7 @@ def verify_tickets(request):
             return redirect('verify_email')
         if entered_otp == stored_otp:
             email = request.session.get('email')
-            invoice = Invoice.objects.filter(email=email, verified=True).order_by('-id').first()
+            invoice = Invoice.objects.filter(email=email, verified=True).order_by('-date').first()
             if not invoice:
                 messages.error(request, 'No valid invoice found.')
                 return redirect('verify_email')
@@ -144,7 +145,7 @@ def verify_tickets(request):
                 barcode_data = str(ticket.id)
                 barcode_obj = barcode.Code128(barcode_data, writer=ImageWriter())
                 buffer = BytesIO()
-                barcode_obj.write(buffer, format='PNG')
+                barcode_obj.write(buffer)
                 barcode_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
                 barcodes[ticket.id] = barcode_base64
             request.session.pop('otp', None)
@@ -155,8 +156,7 @@ def verify_tickets(request):
                 'tickets': tickets,
                 'barcodes': barcodes,
             }
-            return render(request, 'show_tickets.html', context)  # Render the template showing tickets and invoice details
-
+            return render(request, 'ticketsDisplay.html', context)
         else:
             messages.error(request, 'Invalid OTP.')
             return redirect('verify_email')
@@ -173,7 +173,6 @@ def payment_page(request, invoice_id):
                 description=f'Payment for invoice {invoice_id}',
                 metadata={'invoice_id': str(invoice_id)},
             )
-
             client_secret = payment_intent['client_secret']
             return render(request, 'payment_page.html', {
                 'invoice': invoice,
@@ -198,10 +197,7 @@ def payment_page(request, invoice_id):
     })
 
 def payment_success(request, invoice_id):
-    # Retrieve the invoice using the invoice_id
     invoice = Invoice.objects.get(id=invoice_id)
-
-    # Ensure the invoice is verified
     if invoice.verified:
         # Retrieve invoice items
         tickets = invoice.tickets.all()
@@ -242,20 +238,25 @@ def index(request):
     return render(request, 'index.html')
 
 @require_POST
+@login_required
 def adminEventsCreate(request):
     title = request.POST.get("eventName")
     description = request.POST.get("eventDescription")
     cost = int(request.POST.get("ticketCost"))
     date_str = request.POST.get("eventDate")
     date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
-    print(date)
     Events.objects.create(title = title, description = description, cost = cost, eventdate = date)
     return redirect("adminEvents")
 
+@login_required
 def adminEvents(request):
     form = EventImageForm()
     events = Events.objects.all()
     return render(request, "portal/events.html", {"events":events, "form":form})
+
+def invoices(request, event_id):
+    invoices = Invoice.objects.filter(tickets__event_id=event_id).distinct()
+    return render(request, "portal/invoices.html", {"invoices":invoices})
 
 def about(request):
     return render(request, 'about.html')

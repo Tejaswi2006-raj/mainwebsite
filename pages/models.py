@@ -29,3 +29,6 @@ class Invoice(models.Model):
     email = models.EmailField()
     cost = models.IntegerField()
     verified = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now=True)
+    first_name = models.CharField(max_length=200)
+    last_name = models.CharField(max_length=200)

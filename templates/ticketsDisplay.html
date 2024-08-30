@@ -1,0 +1,119 @@
+{% load crispy_forms_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Tickets</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        .header {
+            background-color: #1a2533;
+            color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            text-align: center;
+        }
+        .container {
+            padding: 2rem;
+        }
+        .ticket {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .ticket h3 {
+            margin-top: 0;
+        }
+        .ticket p {
+            margin: 0.5rem 0;
+        }
+        .footer {
+            background-color: #1a2533;
+            color: #ffffff;
+            font-size: 0.875rem;
+            text-align: center;
+            padding: 1.5rem 0;
+        }
+        .qrcode {
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Your Tickets</h1>
+    </header>
+
+    <div class="container">
+        <div class="mb-4">
+            <h2>Invoice ID: {{ invoice.id }}</h2>
+            <p>Total Cost: ${{ invoice.cost }}</p>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs" id="ticketTabs" role="tablist">
+            {% for ticket in tickets %}
+                <li class="nav-item">
+                    <a class="nav-link {% if forloop.first %}active{% endif %}" id="ticket-tab-{{ ticket.id }}" data-toggle="tab" href="#ticket-{{ ticket.id }}" role="tab" aria-controls="ticket-{{ ticket.id }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                        Ticket {{ forloop.counter }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Tabs Content -->
+        <div class="tab-content" id="ticketTabsContent">
+            {% for ticket in tickets %}
+                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="ticket-{{ ticket.id }}" role="tabpanel" aria-labelledby="ticket-tab-{{ ticket.id }}">
+                    <div class="ticket">
+                        <h3>Ticket for Event: {{ ticket.event.title }}</h3>
+                        <p>{{invoice.first_name}} {{invoice.last_name}}</p>
+                        <p>Ticket ID: {{ ticket.id }}</p>
+                        <p>Purchase Date: {{ ticket.purchaseDate }}</p>
+                        <div class="qrcode" id="qrcode-{{ ticket.id }}"></div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <footer class="footer">
+        <p>Thank you for your purchase!</p>
+    </footer>
+
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Script to generate QR codes -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            {% for ticket in tickets %}
+                new QRCode(document.getElementById("qrcode-{{ ticket.id }}"), {
+                    text: "{{ ticket.id }}",
+                    width: 128,
+                    height: 128,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            {% endfor %}
+        });
+    </script>
+
+    <!-- Bootstrap JS (Optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
