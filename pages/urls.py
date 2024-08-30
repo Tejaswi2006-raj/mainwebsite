@@ -20,6 +20,8 @@ urlpatterns = [
     path('tickets/show', views.show_tickets, name='show_tickets'),
     path('tickets/verify', views.verify_tickets, name='verify_tickets'),
     path('login', views.login_view, name='login'),
+    path('tickets/verify/success/<uuid:invoice_id>/<uuid:ticket_id>/', views.verifyTicketSuccess, name='verifyTicketSuccess'),
+    path('verify/failure/<uuid:invoice_id>/<uuid:ticket_id>/', views.verifyTicketFailure, name='verifyTicketFailure'),
     path('payment/confirmation/<uuid:invoice_id>', views.payment_success, name='payment_success'),
     path('payment/<uuid:invoice_id>/', views.payment_page, name='payment_page'),
 ]

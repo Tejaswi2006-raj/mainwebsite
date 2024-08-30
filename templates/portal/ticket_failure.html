@@ -1,0 +1,39 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}Ticket Verification Failed - Computer Concepts{% endblock %}
+
+{% block content %}
+<style>
+  /* Custom styles specific to the failure page */
+  .failure-section {
+    background-color: #ffffff;
+    padding: 3rem 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    color: #333;
+    margin: 2rem 0;
+    text-align: center;
+  }
+  .failure-section h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #1a2533;
+  }
+  .failure-section p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+</style>
+
+<div class="container-square">
+  <div class="content-wrapper">
+    <div class="failure-section">
+      <h2>Ticket Verification Failed</h2>
+      <p>Invoice ID: {{ invoice_id }}</p>
+      <p>Ticket ID: {{ ticket_id }}</p>
+      <p>The ticket does not exist.</p>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

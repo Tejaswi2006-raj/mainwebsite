@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from .models import ContactForm, Events, Invoice, Ticket
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
@@ -23,6 +23,16 @@ from reportlab.pdfgen import canvas
 import base64
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+def verifyTicketSuccess(request, invoice_id, ticket_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+    if invoice.tickets.filter(id=ticket_id).exists():
+        return render(request, 'portal/ticket_success.html', {'invoice': invoice, 'ticket_id': ticket_id})
+    else:
+        return redirect('verifyTicketFailure', invoice_id=invoice_id, ticket_id=ticket_id)
+
+def verifyTicketFailure(request, invoice_id, ticket_id):
+    return render(request, 'ticket_failure.html', {'invoice_id': invoice_id, 'ticket_id': ticket_id})
 
 def generate_otp():
     return str(random.randint(100000, 999999))
