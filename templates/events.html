@@ -83,8 +83,16 @@
     }
     </style>
     
-<div class="container mt-5">
-  <h1 class="mb-4">Upcoming Events</h1>
+    <div class="container mt-5">
+      <div class="row mb-4">
+        <div class="col-md-8">
+          <h1 class="mb-4">Upcoming Events</h1>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <a href="{% url 'show_tickets' %}" class="btn btn-verify-tickets">Retrieve Tickets</a>
+        </div>
+      </div>
+
   <div class="row">
     {% for event in events %}
     <div class="col-md-6 mb-4">

@@ -13,5 +13,9 @@
         <li class="nav-item">
           <a href="{% url 'contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a>
         </li>
-    </ul>
+        <li class="nav-item">
+          <a href="{% url 'events' %}" class="nav-link {% if request.resolver_match.url_name == 'events' %}active{% endif %}">Events</a>
+        </li>
+      </ul>        
+
   </header>
