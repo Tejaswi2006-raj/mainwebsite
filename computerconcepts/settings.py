@@ -28,7 +28,10 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
+AUTHENTICATION_BACKENDS = [
+    'pages.backends.EmailBackend',  # Replace 'your_app' with your actual app name
+    'django.contrib.auth.backends.ModelBackend',
+]
 INSTALLED_APPS = [
     'pages',
     'django.contrib.admin',

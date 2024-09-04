@@ -1,11 +1,18 @@
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from .models import ContactForm, Events, Invoice, Ticket
+from django.contrib.auth.models import User
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.tokens import default_token_generator
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.sites.shortcuts import get_current_site
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
+from django.contrib.auth.hashers import make_password, check_password
 import barcode
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from barcode.writer import ImageWriter
 from io import BytesIO
@@ -23,7 +30,7 @@ from reportlab.pdfgen import canvas
 import base64
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
-
+    
 def verifyTicketSuccess(request, invoice_id, ticket_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
     if invoice.tickets.filter(id=ticket_id).exists():
@@ -37,19 +44,20 @@ def verifyTicketFailure(request, invoice_id, ticket_id):
 def generate_otp():
     return str(random.randint(100000, 999999))
 
+
+
 def login_view(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            messages.success(request, 'You have been logged in successfully.')
-            return redirect('adminEvents')  # Redirect to a success page or dashboard
+        email = request.POST['email']
+        password = request.POST['password']
+
+        user = authenticate(request, email=email, password=password)
+        if user is not None:
+            auth_login(request, user)
+            return redirect('adminEvents')
         else:
             messages.error(request, 'Invalid username or password.')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'login.html')
 
 def send_otp(email):
     otp = generate_otp()
@@ -257,6 +265,42 @@ def adminEventsCreate(request):
     date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
     Events.objects.create(title = title, description = description, cost = cost, eventdate = date)
     return redirect("adminEvents")
+
+def reset(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            password1 = request.POST['new-password']
+            password2 = request.POST['confirm-password']
+            if password1 == password2:
+                user.password = make_password(password1)
+                user.save()
+                return redirect('login')
+        return render(request, 'portal/resetPassword.html')
+    else:
+        return redirect("forgotPassword")
+
+def forgotPassword(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        if User.objects.get(email = email):
+            user = User.objects.get(email=email)
+            current_site = get_current_site(request)
+            subject = 'Reset Your Password'
+            message = render_to_string('email/passwordReset.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user),
+                'protocol': 'https' if request.is_secure() else 'http',
+            })
+            send_mail(subject, '', 'noreplycomputerconcepts@gmail.com', [user.email],  html_message=message)
+            return redirect('login')
+    return render(request, 'portal/forgotPassword.html')
 
 @login_required
 def adminEvents(request):
